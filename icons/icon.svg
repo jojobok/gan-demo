@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="ניהול הגן">
+  <!-- App icon: four toy blocks with the letters א ב ג ד, one in each class color, with a sun.
+       Full-bleed square: iOS rounds the corners itself. -->
+  <rect width="512" height="512" fill="#2f6f6a"/>
+  <circle cx="368" cy="150" r="62" fill="#fff4e0"/>
+  <g stroke="#1f4f4b" stroke-width="7" font-family="Arial, 'Arial Hebrew', sans-serif" font-weight="700" font-size="74" text-anchor="middle">
+    <rect x="96"  y="300" width="104" height="104" rx="16" fill="#86b6f2"/>
+    <rect x="204" y="300" width="104" height="104" rx="16" fill="#7fd19a"/>
+    <rect x="312" y="300" width="104" height="104" rx="16" fill="#f4a3c8"/>
+    <rect x="204" y="192" width="104" height="104" rx="16" fill="#f5c74f"/>
+    <g stroke="none" fill="#1f4f4b">
+      <text x="364" y="378">א</text>
+      <text x="256" y="378">ב</text>
+      <text x="148" y="378">ג</text>
+      <text x="256" y="270">ד</text>
+    </g>
+  </g>
+  <rect x="72" y="404" width="368" height="10" rx="5" fill="#1f4f4b"/>
+</svg>
