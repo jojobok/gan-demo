@@ -13,7 +13,7 @@ function viewLogin() {
     ${fld('משתמש', `<select name="user">${opts.join('')}</select>`)}
     ${fld('קוד אישי', `<input name="pin" type="password" inputmode="numeric" autocomplete="off" required>`)}
     <button class="btn primary block">כניסה</button>
-    ${db.settings.demo ? '<div class="hint">נתוני הדגמה: קוד מנהלת <b>1234</b> · קוד צוות <b>1111</b>. אפשר למחוק את נתוני ההדגמה במסך ההגדרות.</div>' : ''}
+    ${db.settings.demo ? '<div class="hint">נתוני הדגמה: מנהלת – קוד <b>1234</b>. עובדת – לבחור ברשימה "משתמש" את שם העובדת, ואז קוד <b>1111</b>. אפשר למחוק את נתוני ההדגמה במסך ההגדרות.</div>' : ''}
   </form></div>`;
 }
 

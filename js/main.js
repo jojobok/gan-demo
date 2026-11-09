@@ -103,7 +103,11 @@ document.addEventListener('submit', e => {
     e.preventDefault();
     const user = form.user.value, pin = form.pin.value.trim();
     const ok = user === 'manager' ? pin === String(db.settings.managerPin) : (db.staff.find(s => s.id === user) || {}).pin === pin;
-    if (!ok) { toast('קוד שגוי', true); form.pin.value = ''; form.pin.focus(); return; }
+    if (!ok) {
+      const who = user === 'manager' ? `${db.settings.managerName} (מנהלת)` : ((db.staff.find(s => s.id === user) || {}).name || '');
+      toast(`הקוד לא מתאים למשתמש שנבחר: ${who}. אם את עובדת – לבחור קודם את השם שלך ברשימה "משתמש".`, true);
+      form.pin.value = ''; form.pin.focus(); return;
+    }
     me = { id: user }; sessSave();
     state.view = user === 'manager' ? 'dashboard' : 'myday'; state.p = {};
     logAction('כניסה למערכת'); save(); render();
