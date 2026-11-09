@@ -26,10 +26,15 @@ function viewSettings() {
       <p class="small muted" style="margin-top:0">כשעובדת לוחצת "כניסה למשמרת", הטלפון בודק שהיא נמצאת בגן. נשמר רק המרחק, לא המיקום של העובדת.</p>
       ${(() => { const g = geoCfg(); return `
       <div class="geo-status ${geoOn() ? 'on' : ''}">${geoOn() ? `✓ בדיקת המיקום פעילה · טווח ${g.radius} מ׳` : Number.isFinite(g.lat) ? 'בדיקת המיקום כבויה' : 'בדיקת המיקום כבויה – עדיין לא נקבע מיקום הגן'}</div>
-      <p class="small" style="margin:8px 0">לעמוד בתוך הגן וללחוץ:</p>
-      <button type="button" class="btn primary block" data-act="setGardenHere">📍 קביעת מיקום הגן לפי המיקום שלי עכשיו</button>
+      ${Number.isFinite(g.lat) ? `<div class="geo-map"><iframe title="מיקום הגן במפה" loading="lazy" referrerpolicy="no-referrer" src="${osmEmbedUrl(g.lat, g.lng)}"></iframe></div>` : ''}
+      <p class="small" style="margin:10px 0 6px"><b>דרך 1:</b> לפי הכתובת</p>
+      <div class="geo-search">${fld('כתובת הגן', `<input id="geoAddress" type="text" value="${esc(g.address || '')}" placeholder="רחוב, מספר, עיר" maxlength="120" autocomplete="street-address">`)}
+        <button type="button" class="btn primary" data-act="findAddress">🔎 איתור</button></div>
+      <div id="geoResults"></div>
+      <p class="small" style="margin:12px 0 6px"><b>דרך 2:</b> לעמוד בתוך הגן וללחוץ (הכי מדויק):</p>
+      <button type="button" class="btn block" data-act="setGardenHere">📍 קביעת מיקום הגן לפי המיקום שלי עכשיו</button>
       <form id="geoForm" class="form-grid" style="margin-top:12px">
-        ${fld('כתובת הגן (לתצוגה)', inp('address', g.address, 'text', 'maxlength="120"'), 'full')}
+        <input type="hidden" name="address" value="${esc(g.address || '')}">
         ${fld('טווח מותר מהגן', `<select name="radius">${GEO_RADII.map(r => `<option value="${r}" ${Number(g.radius) === r ? 'selected' : ''}>${r} מטר</option>`).join('')}</select>`)}
         ${fld('בדיקת מיקום בכניסה', `<select name="enabled" ${Number.isFinite(g.lat) ? '' : 'disabled'}><option value="1" ${g.enabled ? 'selected' : ''}>פעילה</option><option value="" ${g.enabled ? '' : 'selected'}>כבויה</option></select>`)}
         <div class="full"><button class="btn">שמירה</button></div>

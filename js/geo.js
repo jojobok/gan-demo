@@ -58,3 +58,36 @@ function geoProblem(msg, dist, doClock) {
     </details>`, null);
   window.__geoDoClock = doClock;
 }
+
+/* ---------- מיקום הגן לפי כתובת (OpenStreetMap) ---------- */
+// Only the address the manager types is sent, to OpenStreetMap's free address search. Nothing about children or staff.
+const GEOCODE_URL = 'https://nominatim.openstreetmap.org/search';
+const osmEmbedUrl = (lat, lng) => {
+  const d = 0.003;
+  return `https://www.openstreetmap.org/export/embed.html?bbox=${lng - d},${lat - d},${lng + d},${lat + d}&layer=mapnik&marker=${lat},${lng}`;
+};
+let geoFound = [];
+function findAddress() {
+  const box = document.getElementById('geoAddress'), out = document.getElementById('geoResults');
+  const q = (box && box.value || '').trim();
+  if (q.length < 4) return toast('נא לכתוב כתובת: רחוב, מספר ועיר', true);
+  out.innerHTML = '<p class="small muted">מחפשים…</p>';
+  const url = `${GEOCODE_URL}?format=jsonv2&limit=4&countrycodes=il&accept-language=he&q=${encodeURIComponent(q)}`;
+  fetch(url, { headers: { Accept: 'application/json' } })
+    .then(r => { if (!r.ok) throw new Error(String(r.status)); return r.json(); })
+    .then(list => {
+      geoFound = (list || []).map(x => ({ lat: Number(x.lat), lng: Number(x.lon), name: x.display_name })).filter(x => Number.isFinite(x.lat) && Number.isFinite(x.lng));
+      out.innerHTML = geoFound.length
+        ? `<p class="small muted" style="margin:6px 0">לבחור את הכתובת הנכונה:</p><div class="geo-found">${geoFound.map((x, i) => `<button type="button" class="btn block geo-pick" data-act="pickAddress" data-i="${i}">📍 ${esc(x.name)}</button>`).join('')}</div>`
+        : '<p class="small warn-t">הכתובת לא נמצאה. כדאי לנסות בלי מספר דירה, או עם שם העיר המלא.</p>';
+    })
+    .catch(() => { out.innerHTML = '<p class="small warn-t">אין חיבור לשירות המפות כרגע. אפשר לנסות שוב, או לקבוע לפי המיקום בגן.</p>'; });
+}
+function pickAddress(i) {
+  const x = geoFound[i];
+  if (!x) return;
+  const typed = (document.getElementById('geoAddress') || {}).value || '';
+  db.settings.geo = Object.assign({}, geoCfg(), { lat: +x.lat.toFixed(6), lng: +x.lng.toFixed(6), enabled: true, address: typed.trim() || x.name, setBy: 'address' });
+  logAction('עדכון מיקום הגן לפי כתובת: ' + (typed.trim() || x.name));
+  commit('מיקום הגן נשמר לפי הכתובת. כדאי לבדוק במפה שהנקודה נכונה.');
+}

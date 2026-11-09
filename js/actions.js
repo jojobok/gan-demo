@@ -56,10 +56,12 @@ const ACTIONS = {
     const doClock = window.__geoDoClock || (loc => ACTIONS.clockNow(loc)); closeModal();
     doClock({ ok: false, dist: d.dist === '' ? null : Number(d.dist), reason: reason.trim() });
   },
+  findAddress: () => findAddress(),
+  pickAddress: d => pickAddress(Number(d.i)),
   setGardenHere: () => {
     toast('מאתרים את המיקום…');
     currentPosition().then(pos => {
-      db.settings.geo = Object.assign({}, geoCfg(), { lat: +pos.lat.toFixed(6), lng: +pos.lng.toFixed(6), enabled: true, setAcc: pos.acc });
+      db.settings.geo = Object.assign({}, geoCfg(), { lat: +pos.lat.toFixed(6), lng: +pos.lng.toFixed(6), enabled: true, setAcc: pos.acc, setBy: 'here' });
       logAction('עדכון מיקום הגן לשעון הנוכחות'); commit(`מיקום הגן נשמר (דיוק כ-${pos.acc} מ׳). בדיקת המיקום בכניסה למשמרת הופעלה.`);
     }).catch(e => toast(e.message, true));
   },
