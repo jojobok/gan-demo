@@ -49,6 +49,8 @@ function boardAttention(boards, t) {
     items.push({ level: r.dueDate < t ? 'bad' : 'warn', icon: '🔔', v: 'reminders', text: `${r.dueDate < t ? 'באיחור' : 'להיום'}: ${r.text} (${staffName(r.fromStaffId)})` });
   }
   const rank = { bad: 0, warn: 1, info: 2 };
+  db.shifts.filter(s => s.date === t && s.loc && !s.loc.ok).forEach(s =>
+    items.push({ level: 'warn', icon: '📍', v: 'attendance', text: `${staffName(s.staffId)}: כניסה למשמרת מחוץ לגן${s.loc.dist != null ? ` (${fmtDist(s.loc.dist)})` : ''} – ${s.loc.reason || ''}` }));
   return items.sort((a, b) => rank[a.level] - rank[b.level]);
 }
 

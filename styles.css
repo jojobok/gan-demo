@@ -416,3 +416,17 @@ img, svg, video { max-width: 100%; }
   .board-banner { display: flex; margin-bottom: 14px; box-shadow: var(--shadow); }
   .board-banner img { max-width: 340px; }
 }
+
+/* ---------- Clock-in location check ---------- */
+.clock-btn { display: flex; flex-direction: column; align-items: center; gap: 6px; }
+.geo-wait { text-align: center; padding: 10px 0; }
+.geo-pin { font-size: 44px; animation: geoPulse 1.2s ease-in-out infinite; }
+@keyframes geoPulse { 50% { transform: translateY(-6px); } }
+.geo-anyway { border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; }
+.geo-anyway summary { cursor: pointer; color: var(--muted); font-size: 14px; }
+.geo-anyway[open] { display: flex; flex-direction: column; gap: 8px; }
+.geo-status { border-radius: 10px; padding: 8px 12px; background: var(--bg); border: 1px solid var(--line); font-size: 14px; }
+.geo-status.on { background: var(--ok-soft); color: var(--ok); border-color: transparent; font-weight: 600; }
+.small.ok { color: var(--ok); }
+.small.warn-t { color: var(--warn); }
+@media (max-width: 860px) { .clock-card .clock-btn, .clock-card .clock-btn .btn { width: 100%; } }

@@ -17,7 +17,8 @@ function viewMyDay() {
     <div><div class="muted">${open ? `במשמרת מאז ${open.start}${open.date !== t ? ` (${fmtDate(open.date)})` : ''}` : 'לא במשמרת כרגע'}</div>
       <div class="big-time" id="liveClock">${nowTime()}</div>
       <div class="muted small">היום: ${fmtHM(todayMins)} שעות · החודש: ${fmtHours(month.mins)} שעות ב-${month.days} ימים</div></div>
-    <button class="btn big ${open ? 'off' : 'on'}" data-act="clock">${open ? '⏹ יציאה ממשמרת' : '▶ כניסה למשמרת'}</button>
+    <div class="clock-btn"><button class="btn big ${open ? 'off' : 'on'}" data-act="clock">${open ? '⏹ יציאה ממשמרת' : '▶ כניסה למשמרת'}</button>
+      ${geoOn() && !open ? '<span class="small muted">📍 המיקום ייבדק בכניסה</span>' : open && open.loc ? `<span class="small ${open.loc.ok ? 'ok' : 'warn-t'}">${open.loc.ok ? '📍 הכניסה אומתה בגן' : '📍 הכניסה סומנה לבדיקה'}</span>` : ''}</div>
   </div>
   <div class="stats" style="margin-top:14px">
     ${stat('ילדים בכיתה', kids.length)}

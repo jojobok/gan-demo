@@ -45,7 +45,27 @@ const ACTIONS = {
   print: () => window.print(),
 
   clock: () => {
-    if (REMOTE) return Remote.ops.clock();
+    if (!document.getElementById('modal').hidden) closeModal();
+    const open = openShift(currentUser().id);
+    if ((!open || open.date !== todayStr()) && geoOn()) return clockInWithLocation(loc => ACTIONS.clockNow(loc));
+    return ACTIONS.clockNow(null);
+  },
+  clockAnyway: d => {
+    const reason = (document.querySelector('#modal input[name=reason]') || {}).value || '';
+    if (!reason.trim()) return toast('נא לכתוב סיבה קצרה', true);
+    const doClock = window.__geoDoClock || (loc => ACTIONS.clockNow(loc)); closeModal();
+    doClock({ ok: false, dist: d.dist === '' ? null : Number(d.dist), reason: reason.trim() });
+  },
+  setGardenHere: () => {
+    toast('מאתרים את המיקום…');
+    currentPosition().then(pos => {
+      db.settings.geo = Object.assign({}, geoCfg(), { lat: +pos.lat.toFixed(6), lng: +pos.lng.toFixed(6), enabled: true, setAcc: pos.acc });
+      logAction('עדכון מיקום הגן לשעון הנוכחות'); commit(`מיקום הגן נשמר (דיוק כ-${pos.acc} מ׳). בדיקת המיקום בכניסה למשמרת הופעלה.`);
+    }).catch(e => toast(e.message, true));
+  },
+  clockNow: loc => {
+    const flag = loc && !loc.ok ? `📍 כניסה מחוץ לגן${loc.dist != null ? ` (${fmtDist(loc.dist)})` : ' (מיקום לא זמין)'}: ${loc.reason}` : '';
+    if (REMOTE) return Remote.ops.clock().then(r => { if (flag) logAction(flag); return r; });
     const u = currentUser(), t = todayStr(), now = nowTime();
     const open = openShift(u.id);
     if (open && open.date !== t) {
@@ -57,9 +77,9 @@ const ACTIONS = {
       return commit('המשמרת הקודמת לא נסגרה ונשלחה לתיקון המנהלת. נרשמה כניסה חדשה ' + now);
     }
     if (open) { open.end = now; logAction(`יציאה ממשמרת (${open.start}–${now})`); return commit('יציאה נרשמה ' + now); }
-    db.shifts.push({ id: uid(), staffId: u.id, date: t, start: now, end: '', note: '' });
-    logAction('כניסה למשמרת ' + now);
-    commit('כניסה נרשמה ' + now);
+    db.shifts.push(Object.assign({ id: uid(), staffId: u.id, date: t, start: now, end: '', note: flag }, loc ? { loc } : {}));
+    logAction('כניסה למשמרת ' + now + (loc && loc.ok ? ' · 📍 מיקום אומת' : '') + (flag ? ' · ' + flag : ''));
+    commit(loc && loc.ok ? `✓ כניסה נרשמה ${now} – המיקום אומת` : flag ? `כניסה נרשמה ${now} וסומנה לבדיקת המנהלת` : 'כניסה נרשמה ' + now);
   },
 
   att: (d) => {

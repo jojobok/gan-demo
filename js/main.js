@@ -109,6 +109,13 @@ document.addEventListener('submit', e => {
     logAction('כניסה למערכת'); save(); render();
     return;
   }
+  if (form.id === 'geoForm') {
+    e.preventDefault();
+    const d = Object.fromEntries(new FormData(form));
+    db.settings.geo = Object.assign({}, geoCfg(), { address: (d.address || '').trim(), radius: Number(d.radius) || 200 }, 'enabled' in d ? { enabled: !!d.enabled } : {});
+    logAction('עדכון הגדרות שעון הנוכחות'); commit('ההגדרות נשמרו');
+    return;
+  }
   if (form.id === 'bankForm') {
     e.preventDefault();
     const d = Object.fromEntries(new FormData(form));

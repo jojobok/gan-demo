@@ -9,7 +9,7 @@ const SESSION_KEY = 'gan_crm_session';
 function emptyDb() {
   return {
     version: 1,
-    settings: { gardenName: 'גן ילדי ישראל', managerName: 'דקלה חיים', managerPin: '1234', demo: false, bank: defaultBank() },
+    settings: { gardenName: 'גן ילדי ישראל', managerName: 'דקלה חיים', managerPin: '1234', demo: false, bank: defaultBank(), geo: { enabled: false, lat: null, lng: null, radius: 200, address: '' } },
     classes: [], staff: [], children: [], childAttendance: {}, shifts: [], reports: [],
     complaints: [], schedules: {}, messages: [], reminders: [], log: []
   };
